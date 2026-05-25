@@ -1337,7 +1337,7 @@
                     <div class="ver-supported-tags">
                         ${v.tags.map(t => `<span class="tag-v">${t}</span>`).join('')}
                     </div>
-                    <a href="${v.file.startsWith('http') ? v.file : 'downloads/' + v.file}" class="btn-fs-download" download onclick="onDownloadClick('${id}')">
+                    <a href="${v.file.startsWith('http') ? v.file : 'downloads/' + v.file}" class="btn-fs-download" target="_blank" rel="noopener" onclick="onDownloadClick('${id}')">
                         <i class="fa-solid fa-download"></i> Yuklash
                     </a>
                 </div>`;
