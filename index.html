@@ -5,10 +5,350 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Premium Resurslar Markazi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+    // ===== PROFILE FUNKSIYALARI =====
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    function openProfileModal() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) { openAuthModal('login'); return; }
+
+        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('profileEmailText').textContent = user.email;
+        document.getElementById('profileNameInput').value = user.displayName || '';
+
+        const wrap = document.getElementById('profileAvatarWrap');
+        if (user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+            wrap.style.fontSize = '2.5rem';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+
+        const isDark = !document.body.classList.contains('light-mode');
+        const sw = document.getElementById('toggleThemeSw');
+        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
+
+        document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function toggleThemeFromProfile(el) {
+        el.classList.toggle('on');
+        toggleTheme();
+    }
+
+    function saveProfileName() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) return;
+        const name = document.getElementById('profileNameInput').value.trim();
+        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
+        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
+        user.updateProfile({ displayName: name }).then(function() {
+            document.getElementById('profileDisplayName').textContent = name;
+            document.getElementById('navUsername').textContent = name;
+            showNotif('Ism saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function uploadAvatar(input) {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user || !input.files[0]) return;
+        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
+        const file = input.files[0];
+        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
+        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
+        showNotif('Yuklanmoqda... ⏳');
+        const ext = file.name.split('.').pop();
+        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
+        ref.put(file).then(function(snap) {
+            return snap.ref.getDownloadURL();
+        }).then(function(url) {
+            return user.updateProfile({ photoURL: url });
+        }).then(function() {
+            const wrap = document.getElementById('profileAvatarWrap');
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+            updateNavAvatar(user);
+            showNotif('Rasm saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function updateNavAvatar(user) {
+        const wrap = document.getElementById('navAvatarWrap');
+        if (!wrap) return;
+        if (user && user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else if (user) {
+            wrap.innerHTML = '';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+    }
+
+</script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
+    // ===== PROFILE FUNKSIYALARI =====
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    function openProfileModal() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) { openAuthModal('login'); return; }
+
+        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('profileEmailText').textContent = user.email;
+        document.getElementById('profileNameInput').value = user.displayName || '';
+
+        const wrap = document.getElementById('profileAvatarWrap');
+        if (user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+            wrap.style.fontSize = '2.5rem';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+
+        const isDark = !document.body.classList.contains('light-mode');
+        const sw = document.getElementById('toggleThemeSw');
+        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
+
+        document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function toggleThemeFromProfile(el) {
+        el.classList.toggle('on');
+        toggleTheme();
+    }
+
+    function saveProfileName() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) return;
+        const name = document.getElementById('profileNameInput').value.trim();
+        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
+        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
+        user.updateProfile({ displayName: name }).then(function() {
+            document.getElementById('profileDisplayName').textContent = name;
+            document.getElementById('navUsername').textContent = name;
+            showNotif('Ism saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function uploadAvatar(input) {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user || !input.files[0]) return;
+        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
+        const file = input.files[0];
+        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
+        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
+        showNotif('Yuklanmoqda... ⏳');
+        const ext = file.name.split('.').pop();
+        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
+        ref.put(file).then(function(snap) {
+            return snap.ref.getDownloadURL();
+        }).then(function(url) {
+            return user.updateProfile({ photoURL: url });
+        }).then(function() {
+            const wrap = document.getElementById('profileAvatarWrap');
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+            updateNavAvatar(user);
+            showNotif('Rasm saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function updateNavAvatar(user) {
+        const wrap = document.getElementById('navAvatarWrap');
+        if (!wrap) return;
+        if (user && user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else if (user) {
+            wrap.innerHTML = '';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+    }
+
+</script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+    // ===== PROFILE FUNKSIYALARI =====
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    function openProfileModal() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) { openAuthModal('login'); return; }
+
+        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('profileEmailText').textContent = user.email;
+        document.getElementById('profileNameInput').value = user.displayName || '';
+
+        const wrap = document.getElementById('profileAvatarWrap');
+        if (user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+            wrap.style.fontSize = '2.5rem';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+
+        const isDark = !document.body.classList.contains('light-mode');
+        const sw = document.getElementById('toggleThemeSw');
+        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
+
+        document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function toggleThemeFromProfile(el) {
+        el.classList.toggle('on');
+        toggleTheme();
+    }
+
+    function saveProfileName() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) return;
+        const name = document.getElementById('profileNameInput').value.trim();
+        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
+        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
+        user.updateProfile({ displayName: name }).then(function() {
+            document.getElementById('profileDisplayName').textContent = name;
+            document.getElementById('navUsername').textContent = name;
+            showNotif('Ism saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function uploadAvatar(input) {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user || !input.files[0]) return;
+        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
+        const file = input.files[0];
+        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
+        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
+        showNotif('Yuklanmoqda... ⏳');
+        const ext = file.name.split('.').pop();
+        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
+        ref.put(file).then(function(snap) {
+            return snap.ref.getDownloadURL();
+        }).then(function(url) {
+            return user.updateProfile({ photoURL: url });
+        }).then(function() {
+            const wrap = document.getElementById('profileAvatarWrap');
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+            updateNavAvatar(user);
+            showNotif('Rasm saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function updateNavAvatar(user) {
+        const wrap = document.getElementById('navAvatarWrap');
+        if (!wrap) return;
+        if (user && user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else if (user) {
+            wrap.innerHTML = '';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+    }
+
+</script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js">
+    // ===== PROFILE FUNKSIYALARI =====
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    function openProfileModal() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) { openAuthModal('login'); return; }
+
+        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('profileEmailText').textContent = user.email;
+        document.getElementById('profileNameInput').value = user.displayName || '';
+
+        const wrap = document.getElementById('profileAvatarWrap');
+        if (user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+            wrap.style.fontSize = '2.5rem';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+
+        const isDark = !document.body.classList.contains('light-mode');
+        const sw = document.getElementById('toggleThemeSw');
+        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
+
+        document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function toggleThemeFromProfile(el) {
+        el.classList.toggle('on');
+        toggleTheme();
+    }
+
+    function saveProfileName() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) return;
+        const name = document.getElementById('profileNameInput').value.trim();
+        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
+        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
+        user.updateProfile({ displayName: name }).then(function() {
+            document.getElementById('profileDisplayName').textContent = name;
+            document.getElementById('navUsername').textContent = name;
+            showNotif('Ism saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function uploadAvatar(input) {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user || !input.files[0]) return;
+        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
+        const file = input.files[0];
+        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
+        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
+        showNotif('Yuklanmoqda... ⏳');
+        const ext = file.name.split('.').pop();
+        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
+        ref.put(file).then(function(snap) {
+            return snap.ref.getDownloadURL();
+        }).then(function(url) {
+            return user.updateProfile({ photoURL: url });
+        }).then(function() {
+            const wrap = document.getElementById('profileAvatarWrap');
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+            updateNavAvatar(user);
+            showNotif('Rasm saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function updateNavAvatar(user) {
+        const wrap = document.getElementById('navAvatarWrap');
+        if (!wrap) return;
+        if (user && user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else if (user) {
+            wrap.innerHTML = '';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+    }
+
+</script>
     <style>
         :root {
             --bg-color: #0c0e12;
@@ -1245,10 +1585,6 @@
 
     async function renderComments(id) {
         const list = document.getElementById('commentsList');
-        if (!window.db) {
-            list.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:20px">Izohlarni ko\'rish uchun saytni internet orqali oching. 🌐</div>';
-            return;
-        }
         list.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:20px">Yuklanmoqda... ⏳</div>';
 
         try {
@@ -1396,6 +1732,7 @@
                 document.getElementById('btnRegister').style.display = 'none';
                 document.getElementById('btnUserInfo').style.display = 'flex';
                 document.getElementById('navUsername').textContent = user.displayName || user.email.split('@')[0];
+                updateNavAvatar(user);
                 // Izoh forma ko'rsat
                 const loginWall = document.getElementById('commentLoginWall');
                 const commentForm = document.getElementById('commentFormArea');
@@ -1625,20 +1962,6 @@
         }
     ];
 
-
-    // DuckDuckGo token olish
-    let _ddgToken = null;
-    async function getDDGToken() {
-        if (_ddgToken) return _ddgToken;
-        try {
-            const r = await fetch('https://duckduckgo.com/duckchat/v1/status', {
-                headers: { 'x-vqd-accept': '1' }
-            });
-            _ddgToken = r.headers.get('x-vqd-4') || '';
-            return _ddgToken;
-        } catch(e) { return ''; }
-    }
-
     let chatHistory = [];
 
     const SLIME_SYSTEM = `Sen "Slime AI" — MC-CENTER saytining yordamchi botisan. Seni Minecraft resurslari platformasi uchun yaratishgan.
@@ -1680,43 +2003,19 @@ Agar savol sayt bilan bog'liq bo'lmasa ham yordam ber, lekin saytga qaytishni es
         chatHistory.push({ role: 'user', content: text });
 
         try {
-            // DuckDuckGo AI API
-            const ddgResponse = await fetch('https://duckduckgo.com/duckchat/v1/chat', {
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'text/event-stream',
-                    'x-vqd-4': await getDDGToken()
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    model: 'gpt-4o-mini',
-                    messages: [
-                        { role: 'system', content: SLIME_SYSTEM },
-                        ...chatHistory
-                    ]
+                    model: 'claude-sonnet-4-20250514',
+                    max_tokens: 1000,
+                    system: SLIME_SYSTEM,
+                    messages: chatHistory
                 })
             });
 
-            let reply = '';
-            const reader = ddgResponse.body.getReader();
-            const decoder = new TextDecoder();
-            while(true) {
-                const {done, value} = await reader.read();
-                if(done) break;
-                const chunk = decoder.decode(value);
-                const lines = chunk.split('\n');
-                for(const line of lines) {
-                    if(line.startsWith('data: ')) {
-                        const data = line.slice(6);
-                        if(data === '[DONE]') break;
-                        try {
-                            const parsed = JSON.parse(data);
-                            reply += parsed.message || '';
-                        } catch(e) {}
-                    }
-                }
-            }
-            if(!reply) reply = "Kechirasiz, xatolik yuz berdi. Qayta urinib ko\'ring. 😕";
+            const data = await response.json();
+            const reply = data.content?.[0]?.text || "Kechirasiz, xatolik yuz berdi. 😕";
 
             chatHistory.push({ role: 'assistant', content: reply });
 
@@ -1758,6 +2057,91 @@ Agar savol sayt bilan bog'liq bo'lmasa ham yordam ber, lekin saytga qaytishni es
 
         chatBody.scrollTop = chatBody.scrollHeight;
     }
+
+    // ===== PROFILE FUNKSIYALARI =====
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    function openProfileModal() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) { openAuthModal('login'); return; }
+
+        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
+        document.getElementById('profileEmailText').textContent = user.email;
+        document.getElementById('profileNameInput').value = user.displayName || '';
+
+        const wrap = document.getElementById('profileAvatarWrap');
+        if (user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+            wrap.style.fontSize = '2.5rem';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+
+        const isDark = !document.body.classList.contains('light-mode');
+        const sw = document.getElementById('toggleThemeSw');
+        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
+
+        document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function toggleThemeFromProfile(el) {
+        el.classList.toggle('on');
+        toggleTheme();
+    }
+
+    function saveProfileName() {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user) return;
+        const name = document.getElementById('profileNameInput').value.trim();
+        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
+        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
+        user.updateProfile({ displayName: name }).then(function() {
+            document.getElementById('profileDisplayName').textContent = name;
+            document.getElementById('navUsername').textContent = name;
+            showNotif('Ism saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function uploadAvatar(input) {
+        const user = fbAuth ? fbAuth.currentUser : null;
+        if (!user || !input.files[0]) return;
+        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
+        const file = input.files[0];
+        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
+        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
+        showNotif('Yuklanmoqda... ⏳');
+        const ext = file.name.split('.').pop();
+        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
+        ref.put(file).then(function(snap) {
+            return snap.ref.getDownloadURL();
+        }).then(function(url) {
+            return user.updateProfile({ photoURL: url });
+        }).then(function() {
+            const wrap = document.getElementById('profileAvatarWrap');
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+            updateNavAvatar(user);
+            showNotif('Rasm saqlandi! ✅');
+        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
+    }
+
+    function updateNavAvatar(user) {
+        const wrap = document.getElementById('navAvatarWrap');
+        if (!wrap) return;
+        if (user && user.photoURL) {
+            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else if (user) {
+            wrap.innerHTML = '';
+            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+        }
+    }
+
 </script>
 
 
