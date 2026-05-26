@@ -779,6 +779,198 @@
             .card-img { height: 160px; }
         }
 
+        /* ===== FEATURED SLIDER ===== */
+        .featured-slider-section {
+            margin: 0 0 40px 0;
+        }
+        .featured-slider-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+        .featured-slider-title span {
+            color: #52b788;
+        }
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 16px 50px rgba(0,0,0,0.6);
+            background: #0a0c14;
+            cursor: pointer;
+        }
+        .slider-track {
+            display: flex;
+            transition: transform 0.7s cubic-bezier(0.77, 0, 0.18, 1);
+            will-change: transform;
+        }
+        .slide {
+            min-width: 100%;
+            position: relative;
+            height: 420px;
+        }
+        @media (max-width: 768px) { .slide { height: 240px; } }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.75);
+            transition: filter 0.4s ease;
+        }
+        .slider-wrapper:hover .slide img {
+            filter: brightness(0.55);
+        }
+        /* Dark gradient at bottom */
+        .slide::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 65%;
+            background: linear-gradient(to top, rgba(5,7,15,0.97) 0%, rgba(5,7,15,0.5) 55%, transparent 100%);
+            pointer-events: none;
+        }
+        /* Overlay text */
+        .slide-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 28px 36px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .slide-badge {
+            display: inline-block;
+            background: #52b788;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 30px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 12px rgba(82,183,136,0.5);
+        }
+        .slide-name {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 6px;
+            line-height: 1.15;
+            text-shadow: 0 2px 16px rgba(0,0,0,0.7);
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .slide-versions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            pointer-events: none;
+        }
+        .slide-ver-tag {
+            background: rgba(82,183,136,0.13);
+            border: 1px solid rgba(82,183,136,0.35);
+            color: #a8e6c5;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+        /* Hover glow effect */
+        .slider-wrapper:hover .slide-name {
+            color: #7de8b8;
+            text-shadow: 0 0 20px rgba(82,183,136,0.7), 0 2px 16px rgba(0,0,0,0.7);
+        }
+        .slider-wrapper:hover .slide-ver-tag {
+            background: rgba(82,183,136,0.22);
+            border-color: rgba(82,183,136,0.7);
+            color: #52ffaa;
+            box-shadow: 0 0 10px rgba(82,183,136,0.4);
+        }
+        /* Click hint */
+        .slide-click-hint {
+            position: absolute;
+            top: 22px; right: 28px;
+            z-index: 3;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(82,183,136,0.4);
+            color: #52b788;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .slider-wrapper:hover .slide-click-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Arrows */
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(10,12,20,0.75);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(82,183,136,0.3);
+            color: #fff;
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            opacity: 0;
+        }
+        .slider-wrapper:hover .slider-arrow { opacity: 1; }
+        .slider-arrow:hover { background: #52b788; border-color: #52b788; transform: translateY(-50%) scale(1.1); }
+        .slider-arrow.prev { left: 16px; }
+        .slider-arrow.next { right: 16px; }
+        /* Dots */
+        .slider-dots {
+            position: absolute;
+            bottom: 16px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 8px;
+            z-index: 10;
+        }
+        .slider-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .slider-dot.active {
+            width: 26px;
+            border-radius: 4px;
+            background: #52b788;
+            box-shadow: 0 0 8px rgba(82,183,136,0.8);
+        }
+        /* Progress bar */
+        .slider-progress {
+            position: absolute;
+            bottom: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #52b788, #a8e6c5);
+            z-index: 10;
+            transition: width 0.1s linear;
+            border-radius: 0 2px 0 0;
+            box-shadow: 0 0 8px rgba(82,183,136,0.6);
+        }
+
         /* ===== PROFILE MODAL ===== */
         .profile-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -967,6 +1159,88 @@
         <h1>Minecraft Premium Resurslar Markazi</h1>
         <p>Bu yerda oʻzingiz uchun koʻplab premium modlar, shaderlar va tekstura paketlarini daxshatli tezlikda topasiz!</p>
     </header>
+
+    <!-- ===== FEATURED SLIDER ===== -->
+    <div class="featured-slider-section">
+        <div class="featured-slider-title">🔥 <span>Featured</span> — Eng Mashhur Shaderlar & Modlar</div>
+        <div class="slider-wrapper" id="featuredSlider">
+            <div class="slider-track" id="sliderTrack">
+
+                <!-- Slide 1: BSL Shaders -->
+                <div class="slide" onclick="openDownloadFullScreen('bsl','BSL Shaders','Premium vizual grafik shader paketi.','images/bsl.png',[{label:\'v1.20.1\',badge:\'Release\',tags:[\'1.20.1\',\'OptiFine/Iris\'],file:\'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.20.1.zip\',date:\'Bugun yangilandi\'},{label:\'v1.19.2\',badge:\'LTS\',tags:[\'1.19.2\',\'OptiFine/Iris\'],file:\'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.19.2.zip\',date:\'O\\\'tgan hafta\'},{label:\'v1.16.5\',badge:\'Legacy\',tags:[\'1.16.5\',\'OptiFine\'],file:\'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.16.5.zip\',date:\'Eski versiya\'}])">
+                    <img src="https://raw.githubusercontent.com/cheesmaster95-sketch/minecraft-sayt/main/images/bsl.png" alt="BSL Shaders" onerror="this.src='images/bsl.png'">
+                    <div class="slide-click-hint"><i class="fa-solid fa-arrow-down"></i> Yuklab Olish</div>
+                    <div class="slide-overlay">
+                        <div class="slide-badge">Shader</div>
+                        <div class="slide-name">BSL Shaders</div>
+                        <div class="slide-versions">
+                            <span class="slide-ver-tag">1.20.1</span>
+                            <span class="slide-ver-tag">1.19.2</span>
+                            <span class="slide-ver-tag">1.16.5</span>
+                            <span class="slide-ver-tag">OptiFine / Iris</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Voxels -->
+                <div class="slide" onclick="openDownloadFullScreen('voxels','Voxels Shaders','Ultra-realistik Minecraft grafika paketi.','images/voxels.jfif',[{label:\'v1.20.1\',badge:\'Release\',tags:[\'1.20.1\',\'Iris\'],file:\'#\',date:\'Yangilandi\'},{label:\'v1.19.2\',badge:\'LTS\',tags:[\'1.19.2\',\'Iris\'],file:\'#\',date:\'Eski versiya\'}])">
+                    <img src="https://raw.githubusercontent.com/cheesmaster95-sketch/minecraft-sayt/main/images/voxels.jfif" alt="Voxels Shaders" onerror="this.src='images/voxels.jfif'">
+                    <div class="slide-click-hint"><i class="fa-solid fa-arrow-down"></i> Yuklab Olish</div>
+                    <div class="slide-overlay">
+                        <div class="slide-badge">Shader</div>
+                        <div class="slide-name">Voxels Shaders</div>
+                        <div class="slide-versions">
+                            <span class="slide-ver-tag">1.20.1</span>
+                            <span class="slide-ver-tag">1.19.2</span>
+                            <span class="slide-ver-tag">Iris</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Unbound -->
+                <div class="slide" onclick="openDownloadFullScreen('unbound','Unbound Shaders','Chiroyli va yengil shader paketi.','images/unbound.jfif',[{label:\'v1.20.1\',badge:\'Release\',tags:[\'1.20.1\',\'Iris\'],file:\'#\',date:\'Yangilandi\'},{label:\'v1.19.2\',badge:\'LTS\',tags:[\'1.19.2\',\'Iris\'],file:\'#\',date:\'Eski versiya\'}])">
+                    <img src="https://raw.githubusercontent.com/cheesmaster95-sketch/minecraft-sayt/main/images/unbound.jfif" alt="Unbound Shaders" onerror="this.src='images/unbound.jfif'">
+                    <div class="slide-click-hint"><i class="fa-solid fa-arrow-down"></i> Yuklab Olish</div>
+                    <div class="slide-overlay">
+                        <div class="slide-badge">Shader</div>
+                        <div class="slide-name">Unbound Shaders</div>
+                        <div class="slide-versions">
+                            <span class="slide-ver-tag">1.20.1</span>
+                            <span class="slide-ver-tag">1.19.2</span>
+                            <span class="slide-ver-tag">Iris</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 4: OptiFine -->
+                <div class="slide" onclick="openDownloadFullScreen('optifine','OptiFine','Grafika va shader optimizator mod.','images/OptiFine.webp',[{label:\'v1.20.1 HD U I6\',badge:\'Release\',tags:[\'1.20.1\',\'Standalone\'],file:\'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.20.1_HD_U_I6.jar\',date:\'Yangilandi\'},{label:\'v1.19.2 HD U H9\',badge:\'LTS\',tags:[\'1.19.2\',\'Standalone\'],file:\'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.19.2_HD_U_H9.jar\',date:\'O\\\'tgan hafta\'},{label:\'v1.16.5 HD U G7\',badge:\'Legacy\',tags:[\'1.16.5\',\'Standalone\'],file:\'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.16.5_HD_U_G7.jar\',date:\'Eski versiya\'}])">
+                    <img src="https://raw.githubusercontent.com/cheesmaster95-sketch/minecraft-sayt/main/images/optifine.jpg" alt="OptiFine" onerror="this.src='images/OptiFine.webp'">
+                    <div class="slide-click-hint"><i class="fa-solid fa-arrow-down"></i> Yuklab Olish</div>
+                    <div class="slide-overlay">
+                        <div class="slide-badge">Mod</div>
+                        <div class="slide-name">OptiFine</div>
+                        <div class="slide-versions">
+                            <span class="slide-ver-tag">1.20.1</span>
+                            <span class="slide-ver-tag">1.19.2</span>
+                            <span class="slide-ver-tag">1.16.5</span>
+                            <span class="slide-ver-tag">Standalone</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Arrows -->
+            <button class="slider-arrow prev" onclick="sliderMove(-1); event.stopPropagation()"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="slider-arrow next" onclick="sliderMove(1); event.stopPropagation()"><i class="fa-solid fa-chevron-right"></i></button>
+
+            <!-- Dots -->
+            <div class="slider-dots" id="sliderDots"></div>
+
+            <!-- Progress bar -->
+            <div class="slider-progress" id="sliderProgress"></div>
+        </div>
+    </div>
 
     <div class="main-layout">
         <div class="content-area">
@@ -2146,6 +2420,113 @@ Agar savol sayt bilan bog'liq bo'lmasa ham yordam ber, lekin saytga qaytishni es
 
 </script>
 
+
+<!-- ===== FEATURED SLIDER JS ===== -->
+<script>
+(function() {
+    const TOTAL = 4;
+    const AUTO_DELAY = 4500; // ms per slide
+    let current = 0;
+    let progressStart = null;
+    let rafId = null;
+    let autoTimeout = null;
+    let isPaused = false;
+
+    const track = document.getElementById('sliderTrack');
+    const dotsContainer = document.getElementById('sliderDots');
+    const progressBar = document.getElementById('sliderProgress');
+    const wrapper = document.getElementById('featuredSlider');
+
+    // Build dots
+    for (let i = 0; i < TOTAL; i++) {
+        const d = document.createElement('button');
+        d.className = 'slider-dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'Slide ' + (i+1));
+        d.addEventListener('click', function(e) {
+            e.stopPropagation();
+            goTo(i);
+        });
+        dotsContainer.appendChild(d);
+    }
+
+    function updateDots() {
+        const dots = dotsContainer.querySelectorAll('.slider-dot');
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    function goTo(idx) {
+        current = (idx + TOTAL) % TOTAL;
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        updateDots();
+        resetProgress();
+    }
+
+    window.sliderMove = function(dir) {
+        goTo(current + dir);
+    };
+
+    // Progress bar animation
+    function resetProgress() {
+        progressStart = null;
+        progressBar.style.width = '0%';
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        if (!isPaused) rafId = requestAnimationFrame(animateProgress);
+    }
+
+    function animateProgress(ts) {
+        if (!progressStart) progressStart = ts;
+        const elapsed = ts - progressStart;
+        const pct = Math.min((elapsed / AUTO_DELAY) * 100, 100);
+        progressBar.style.width = pct + '%';
+        if (pct < 100) {
+            rafId = requestAnimationFrame(animateProgress);
+        } else {
+            rafId = null;
+            current = (current + 1) % TOTAL;
+            track.style.transform = 'translateX(-' + (current * 100) + '%)';
+            updateDots();
+            progressBar.style.width = '0%';
+            progressStart = null;
+            if (!isPaused) rafId = requestAnimationFrame(animateProgress);
+        }
+    }
+
+    function startAuto() {
+        isPaused = false;
+        resetProgress();
+    }
+
+    function pauseAuto() {
+        isPaused = true;
+        if (rafId) cancelAnimationFrame(rafId);
+        progressBar.style.transition = 'none';
+    }
+
+    wrapper.addEventListener('mouseenter', pauseAuto);
+    wrapper.addEventListener('mouseleave', startAuto);
+
+    // Touch swipe support
+    let touchStartX = 0;
+    wrapper.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        pauseAuto();
+    }, {passive: true});
+    wrapper.addEventListener('touchend', function(e) {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+        startAuto();
+    }, {passive: true});
+
+    // Keyboard arrows
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') sliderMove(-1);
+        if (e.key === 'ArrowRight') sliderMove(1);
+    });
+
+    // Start
+    requestAnimationFrame(animateProgress);
+})();
+</script>
 
 <!-- PROFILE MODAL -->
 <div class="profile-modal-overlay" id="profileModal">
