@@ -1,356 +1,14 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta name="google-site-verification" content="4gurzdSFfYtHz_y0ksVvhbdCwGnGfAfKvKR0HYChFns" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Premium Resurslar Markazi</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            wrap.style.fontSize = '2.5rem';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        showNotif('Yuklanmoqda... ⏳');
-        const ext = file.name.split('.').pop();
-        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
-        ref.put(file).then(function(snap) {
-            return snap.ref.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url });
-        }).then(function() {
-            const wrap = document.getElementById('profileAvatarWrap');
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-            updateNavAvatar(user);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            wrap.innerHTML = '';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-    }
-
-</script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            wrap.style.fontSize = '2.5rem';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        showNotif('Yuklanmoqda... ⏳');
-        const ext = file.name.split('.').pop();
-        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
-        ref.put(file).then(function(snap) {
-            return snap.ref.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url });
-        }).then(function() {
-            const wrap = document.getElementById('profileAvatarWrap');
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-            updateNavAvatar(user);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            wrap.innerHTML = '';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-    }
-
-</script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            wrap.style.fontSize = '2.5rem';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        showNotif('Yuklanmoqda... ⏳');
-        const ext = file.name.split('.').pop();
-        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
-        ref.put(file).then(function(snap) {
-            return snap.ref.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url });
-        }).then(function() {
-            const wrap = document.getElementById('profileAvatarWrap');
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-            updateNavAvatar(user);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            wrap.innerHTML = '';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-    }
-
-</script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js">
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            wrap.style.fontSize = '2.5rem';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        showNotif('Yuklanmoqda... ⏳');
-        const ext = file.name.split('.').pop();
-        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
-        ref.put(file).then(function(snap) {
-            return snap.ref.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url });
-        }).then(function() {
-            const wrap = document.getElementById('profileAvatarWrap');
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-            updateNavAvatar(user);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            wrap.innerHTML = '';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-    }
-
-</script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
     <style>
         :root {
             --bg-color: #0c0e12;
@@ -1008,9 +666,9 @@
                             <button class="btn-like" id="like-bsl" onclick="toggleLike('bsl')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('bsl','BSL Shaders','Premium vizual grafik shader paketi.','images/bsl.jfif',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.20.1.zip',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.19.2.zip',date:'O\'tgan hafta'},
-                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.16.5.zip',date:'Eski versiya'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/bsl_1.20.1.zip',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/bsl_1.19.2.zip',date:'O\'tgan hafta'},
+                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/bsl_1.16.5.zip',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1028,9 +686,9 @@
                             <button class="btn-like" id="like-complementary" onclick="toggleLike('complementary')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('complementary','Complementary Shaders','Klassik va silliq shaderlar.','images/complementary.png',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/comlemetary_shaders_1.20.1.zip',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/complementary_shaders_1.19.2.zip',date:'O\'tgan hafta'},
-                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/complementary_shaders_1.16.5.zip',date:'Eski versiya'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/comlemetary_shaders_1.20.1.zip',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/complementary_shaders_1.19.2.zip',date:'O\'tgan hafta'},
+                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/complementary_shaders_1.16.5.zip',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1048,9 +706,9 @@
                             <button class="btn-like" id="like-jei" onclick="toggleLike('jei')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('jei','Just Enough Items (JEI)','Kraftlarni ko\'rsatuvchi asosiy mod.','images/jei.jfif',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/jei_1.20.1.jar',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/jei_1.19.2.jar',date:'O\'tgan hafta'},
-                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/jei_1.16.5.jar',date:'Eski versiya'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/jei_1.20.1.jar',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/jei_1.19.2.jar',date:'O\'tgan hafta'},
+                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/jei_1.16.5.jar',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1068,9 +726,9 @@
                             <button class="btn-like" id="like-sodium" onclick="toggleLike('sodium')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('sodium','Sodium','FPS oshiruvchi asosiy Fabric mod.','images/sodium.png',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/sodium_1.20.1.jar',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/sodium_1.19.2.jar',date:'O\'tgan hafta'},
-                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/sodium_1.16.5.jar',date:'Eski versiya'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/sodium_1.20.1.jar',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/sodium_1.19.2.jar',date:'O\'tgan hafta'},
+                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/sodium_1.16.5.jar',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1088,9 +746,9 @@
                             <button class="btn-like" id="like-optifine" onclick="toggleLike('optifine')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('optifine','OptiFine','Grafika va shader optimizator mod.','images/OptiFine.webp',[
-                            {label:'v1.20.1 HD U I6',badge:'Release',tags:['1.20.1','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.20.1_HD_U_I6.jar',date:'Bugun yangilandi'},
-                            {label:'v1.19.2 HD U H9',badge:'LTS',tags:['1.19.2','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.19.2_HD_U_H9.jar',date:'O\'tgan hafta'},
-                            {label:'v1.16.5 HD U G7',badge:'Legacy',tags:['1.16.5','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.16.5_HD_U_G7.jar',date:'Eski versiya'}
+                            {label:'v1.20.1 HD U I6',badge:'Release',tags:['1.20.1','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/OptiFine_1.20.1_HD_U_I6.jar',date:'Bugun yangilandi'},
+                            {label:'v1.19.2 HD U H9',badge:'LTS',tags:['1.19.2','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/OptiFine_1.19.2_HD_U_H9.jar',date:'O\'tgan hafta'},
+                            {label:'v1.16.5 HD U G7',badge:'Legacy',tags:['1.16.5','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/OptiFine_1.16.5_HD_U_G7.jar',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1110,9 +768,9 @@
                             <button class="btn-like" id="like-makeup" onclick="toggleLike('makeup')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('makeup','MakeUp - Ultra Fast','FPS doʻstona shader.','images/makeup.webp',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/make_up_ultra_fast_1.20.1.zip',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/make_up_ultra_fast_1.19.2.zip',date:'O\'tgan hafta'},
-                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/make_up_ultra_fast_1.16.5.zip',date:'Eski versiya'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/make_up_ultra_fast_1.20.1.zip',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/make_up_ultra_fast_1.19.2.zip',date:'O\'tgan hafta'},
+                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/make_up_ultra_fast_1.16.5.zip',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1130,9 +788,9 @@
                             <button class="btn-like" id="like-mellow" onclick="toggleLike('mellow')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('mellow','Mellow Shaders','Mayin shader pack.','images/mellow.png',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/mellow_1.20.1.zip',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/mellow_1.19.2.zip',date:'O\'tgan hafta'},
-                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/mellow_1.16.5.zip',date:'Eski versiya'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/mellow_1.20.1.zip',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/mellow_1.19.2.zip',date:'O\'tgan hafta'},
+                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/mellow_1.16.5.zip',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1152,7 +810,7 @@
                             <button class="btn-like" id="like-manfog" onclick="toggleLike('manfog')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('manfog','The Man from the Fog','Tumanli horror mod — yolg\'iz qolmang!','images/the_man_from_the_fog.jpg',[
-                            {label:'v1.19.2',badge:'Release',tags:['1.19.2','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/the_man_from_the_fog_1.19.2.jar',date:'Yangilangan'}
+                            {label:'v1.19.2',badge:'Release',tags:['1.19.2','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/the_man_from_the_fog_1.19.2.jar',date:'Yangilangan'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1170,9 +828,9 @@
                             <button class="btn-like" id="like-unbound" onclick="toggleLike('unbound')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('unbound','Complementary Unbound','Unbound seriyali mukammal grafikalar.','images/Unbound.png',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/unbound_1.20.1.zip',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/unbound_1.19.2.zip',date:'O\'tgan hafta'},
-                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/unbound_1.16.5.zip',date:'Eski versiya'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/unbound_1.20.1.zip',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/unbound_1.19.2.zip',date:'O\'tgan hafta'},
+                            {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/unbound_1.16.5.zip',date:'Eski versiya'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1190,8 +848,8 @@
                             <button class="btn-like" id="like-voxels" onclick="toggleLike('voxels')"><i class="fa-solid fa-heart"></i> Like</button>
                         </div>
                         <div class="btn" onclick="openDownloadFullScreen('voxels','Rethinking Voxels','Vokselli nur modifikatsiyasi.','images/voxels.jpg',[
-                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/rethinking_voxels_1.20.1.zip',date:'Bugun yangilandi'},
-                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/rethinking_voxels_1.19.2.zip',date:'O\'tgan hafta'}
+                            {label:'v1.20.1',badge:'Release',tags:['1.20.1','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/rethinking_voxels_1.20.1.zip',date:'Bugun yangilandi'},
+                            {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/rethinking_voxels_1.19.2.zip',date:'O\'tgan hafta'}
                         ])">Yuklab Olish</div>
                     </div>
                 </div>
@@ -1679,7 +1337,7 @@
                     <div class="ver-supported-tags">
                         ${v.tags.map(t => `<span class="tag-v">${t}</span>`).join('')}
                     </div>
-                    <a href="downloads/${v.file}" class="btn-fs-download" download onclick="onDownloadClick('${id}')">
+                    <a href="${v.file.startsWith('http') ? v.file : 'downloads/' + v.file}" class="btn-fs-download" target="_blank" rel="noopener" onclick="onDownloadClick('${id}')">
                         <i class="fa-solid fa-download"></i> Yuklash
                     </a>
                 </div>`;
@@ -1734,7 +1392,6 @@
                 document.getElementById('btnRegister').style.display = 'none';
                 document.getElementById('btnUserInfo').style.display = 'flex';
                 document.getElementById('navUsername').textContent = user.displayName || user.email.split('@')[0];
-                updateNavAvatar(user);
                 // Izoh forma ko'rsat
                 const loginWall = document.getElementById('commentLoginWall');
                 const commentForm = document.getElementById('commentFormArea');
@@ -1860,9 +1517,9 @@
             desc: 'Issiq atmosfera, tiniq suv va dinamik soyalar. OptiFine/Iris bilan ishlaydi.',
             versions: ['1.20.1', '1.19.2', '1.16.5'], loader: 'OptiFine / Iris',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.20.1.zip',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.19.2.zip',date:"O'tgan hafta"},
-                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/bsl_1.16.5.zip',date:'Eski versiya'}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/bsl_1.20.1.zip',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/bsl_1.19.2.zip',date:"O'tgan hafta"},
+                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/bsl_1.16.5.zip',date:'Eski versiya'}
             ],
             img: 'images/bsl.jfif'
         },
@@ -1871,9 +1528,9 @@
             desc: 'Original ko\'rinishni saqlab, yorug\'lik va soyalarni silliqlaydigan klassik shader.',
             versions: ['1.20.1', '1.19.2', '1.16.5'], loader: 'OptiFine / Iris',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/comlemetary_shaders_1.20.1.zip',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/complementary_shaders_1.19.2.zip',date:"O'tgan hafta"},
-                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/complementary_shaders_1.16.5.zip',date:'Eski versiya'}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/comlemetary_shaders_1.20.1.zip',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/complementary_shaders_1.19.2.zip',date:"O'tgan hafta"},
+                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/complementary_shaders_1.16.5.zip',date:'Eski versiya'}
             ],
             img: 'images/complementary.png'
         },
@@ -1882,9 +1539,9 @@
             desc: 'Har bir blokda mukammal reflection va realistik tuman. Premium seriya.',
             versions: ['1.20.1', '1.19.2', '1.16.5'], loader: 'OptiFine / Iris',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/unbound_1.20.1.zip',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/unbound_1.19.2.zip',date:"O'tgan hafta"},
-                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/unbound_1.16.5.zip',date:'Eski versiya'}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/unbound_1.20.1.zip',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/unbound_1.19.2.zip',date:"O'tgan hafta"},
+                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/unbound_1.16.5.zip',date:'Eski versiya'}
             ],
             img: 'images/Unbound.png'
         },
@@ -1893,9 +1550,9 @@
             desc: 'FPS tushirmay ishlaydi. Tezkor va barqaror shader. Kuchsiz PClar uchun ham zo\'r.',
             versions: ['1.20.1', '1.19.2', '1.16.5'], loader: 'OptiFine / Iris',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/make_up_ultra_fast_1.20.1.zip',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/make_up_ultra_fast_1.19.2.zip',date:"O'tgan hafta"},
-                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/make_up_ultra_fast_1.16.5.zip',date:'Eski versiya'}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/make_up_ultra_fast_1.20.1.zip',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/make_up_ultra_fast_1.19.2.zip',date:"O'tgan hafta"},
+                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/make_up_ultra_fast_1.16.5.zip',date:'Eski versiya'}
             ],
             img: 'images/makeup.webp'
         },
@@ -1904,9 +1561,9 @@
             desc: 'Pastel rangli, ko\'zni charchatmaydigan yengil shader. Kuchsiz PClar uchun ideal.',
             versions: ['1.20.1', '1.19.2', '1.16.5'], loader: 'OptiFine / Iris',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/mellow_1.20.1.zip',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/mellow_1.19.2.zip',date:"O'tgan hafta"},
-                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/mellow_1.16.5.zip',date:'Eski versiya'}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/mellow_1.20.1.zip',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','OptiFine/Iris'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/mellow_1.19.2.zip',date:"O'tgan hafta"},
+                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','OptiFine'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/mellow_1.16.5.zip',date:'Eski versiya'}
             ],
             img: 'images/mellow.png'
         },
@@ -1915,8 +1572,8 @@
             desc: 'Real vaqtda yorug\'lik sinishi va rangli nurlar. Fabric/Iris bilan ishlaydi.',
             versions: ['1.20.1', '1.19.2'], loader: 'Iris / Fabric',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/rethinking_voxels_1.20.1.zip',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/rethinking_voxels_1.19.2.zip',date:"O'tgan hafta"}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/rethinking_voxels_1.20.1.zip',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Iris/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/rethinking_voxels_1.19.2.zip',date:"O'tgan hafta"}
             ],
             img: 'images/voxels.jpg'
         },
@@ -1925,9 +1582,9 @@
             desc: 'Barcha bloklar ro\'yxati, craft va pishirish usullarini ko\'rsatadi. Eng mashhur mod.',
             versions: ['1.20.1', '1.19.2', '1.16.5'], loader: 'Forge / Fabric',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/jei_1.20.1.jar',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/jei_1.19.2.jar',date:"O'tgan hafta"},
-                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/jei_1.16.5.jar',date:'Eski versiya'}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/jei_1.20.1.jar',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Forge/Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/jei_1.19.2.jar',date:"O'tgan hafta"},
+                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/jei_1.16.5.jar',date:'Eski versiya'}
             ],
             img: 'images/jei.jfif'
         },
@@ -1936,9 +1593,9 @@
             desc: 'Fabric render optimizatori. FPS ni juda yuqori ko\'taradi.',
             versions: ['1.20.1', '1.19.2', '1.16.5'], loader: 'Fabric',
             versions_detail: [
-                {label:'v1.20.1',badge:'Release',tags:['1.20.1','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/sodium_1.20.1.jar',date:'Bugun yangilandi'},
-                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/sodium_1.19.2.jar',date:"O'tgan hafta"},
-                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/sodium_1.16.5.jar',date:'Eski versiya'}
+                {label:'v1.20.1',badge:'Release',tags:['1.20.1','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/sodium_1.20.1.jar',date:'Bugun yangilandi'},
+                {label:'v1.19.2',badge:'LTS',tags:['1.19.2','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/sodium_1.19.2.jar',date:"O'tgan hafta"},
+                {label:'v1.16.5',badge:'Legacy',tags:['1.16.5','Fabric'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/sodium_1.16.5.jar',date:'Eski versiya'}
             ],
             img: 'images/sodium.png'
         },
@@ -1947,9 +1604,9 @@
             desc: 'Grafikalarni sozlash, tezlashtirish va shaderlarni yoqish imkonini beradi.',
             versions: ['1.20.1 HD U I6', '1.19.2 HD U H9', '1.16.5 HD U G7'], loader: 'Standalone',
             versions_detail: [
-                {label:'v1.20.1 HD U I6',badge:'Release',tags:['1.20.1','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.20.1_HD_U_I6.jar',date:'Bugun yangilandi'},
-                {label:'v1.19.2 HD U H9',badge:'LTS',tags:['1.19.2','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.19.2_HD_U_H9.jar',date:"O'tgan hafta"},
-                {label:'v1.16.5 HD U G7',badge:'Legacy',tags:['1.16.5','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/OptiFine_1.16.5_HD_U_G7.jar',date:'Eski versiya'}
+                {label:'v1.20.1 HD U I6',badge:'Release',tags:['1.20.1','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/OptiFine_1.20.1_HD_U_I6.jar',date:'Bugun yangilandi'},
+                {label:'v1.19.2 HD U H9',badge:'LTS',tags:['1.19.2','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/OptiFine_1.19.2_HD_U_H9.jar',date:"O'tgan hafta"},
+                {label:'v1.16.5 HD U G7',badge:'Legacy',tags:['1.16.5','Standalone'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/OptiFine_1.16.5_HD_U_G7.jar',date:'Eski versiya'}
             ],
             img: 'images/OptiFine.webp'
         },
@@ -1958,7 +1615,7 @@
             desc: 'Horror mod. Tumanli tunlarda noma\'lum mavjudot sizi kuzatadi. Qo\'rqinchli!',
             versions: ['1.19.2'], loader: 'Forge',
             versions_detail: [
-                {label:'v1.19.2',badge:'Release',tags:['1.19.2','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/1.0.0/the_man_from_the_fog_1.19.2.jar',date:'Yangilangan'}
+                {label:'v1.19.2',badge:'Release',tags:['1.19.2','Forge'],file:'https://github.com/cheesmaster95-sketch/minecraft-sayt/releases/download/v1.0.0/the_man_from_the_fog_1.19.2.jar',date:'Yangilangan'}
             ],
             img: 'images/the_man_from_the_fog.jpg'
         }
@@ -2059,91 +1716,6 @@ Agar savol sayt bilan bog'liq bo'lmasa ham yordam ber, lekin saytga qaytishni es
 
         chatBody.scrollTop = chatBody.scrollHeight;
     }
-
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            wrap.style.fontSize = '2.5rem';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage ulanmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif('Rasm 2MB dan kichik bo\'lsin!'); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        showNotif('Yuklanmoqda... ⏳');
-        const ext = file.name.split('.').pop();
-        const ref = window.fbStorage.ref('avatars/' + user.uid + '.' + ext);
-        ref.put(file).then(function(snap) {
-            return snap.ref.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url });
-        }).then(function() {
-            const wrap = document.getElementById('profileAvatarWrap');
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-            updateNavAvatar(user);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            wrap.innerHTML = '';
-            wrap.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
-        }
-    }
-
 </script>
 
 
