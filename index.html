@@ -1338,6 +1338,38 @@
             margin: 0;
             white-space: pre-line;
         }
+        .dl-install-steps {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .dl-install-steps li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.93rem;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .dl-install-steps li:last-child { border-bottom: none; }
+        .dl-install-step-num {
+            min-width: 24px; height: 24px;
+            background: #1bd96a;
+            color: #0a0c14;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .dl-install-steps li b { color: #1bd96a; font-weight: 700; }
+
         .dl-fs-tags-list {
             display: flex;
             flex-wrap: wrap;
@@ -1798,6 +1830,14 @@
             <div class="dl-fs-tags-list" id="fsDlTagsList"></div>
         </div>
 
+        <!-- INSTALL GUIDE -->
+        <div class="dl-fs-install-section" id="fsDlInstallSection" style="display:none;margin:0 0 28px 0;">
+            <div class="dl-fs-section-title" style="color:#52b788;font-size:1rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-circle-play"></i> <span id="fsDlInstallTitle">Как установить</span>
+            </div>
+            <ol class="dl-install-steps" id="fsDlInstallSteps"></ol>
+        </div>
+
         <!-- COMMENTS -->
         <div class="comments-section">
             <div class="dl-fs-section-title">
@@ -2101,6 +2141,7 @@
 
     // Sahifa ochilganda view ++ qilish (har session bir marta)
     function trackView(id) {
+        if (!window.db) return;
         const key = 'viewed_' + id;
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, '1');
@@ -2257,6 +2298,9 @@
 
     /* ===== FULLSCREEN OPEN ===== */
     function openDownloadFullScreen(id, title, desc, imgUrl, versions) {
+        if (!window.INSTALL_GUIDES) {
+            window.INSTALL_GUIDES = {"bsl": {"name": "BSL Shaders", "loader": "OptiFine", "steps": ["Скачай и установи <b>Java</b> (если не установлена)", "Скачай и установи <b>OptiFine</b> для своей версии Minecraft", "Скачай шейдер <b>BSL Shaders</b> (файл .zip)", "Запусти Minecraft с профилем <b>OptiFine</b>", "Зайди в <b>Настройки</b> → <b>Настройки видео</b> → <b>Шейдеры</b>", "Нажми <b>Открыть папку шейдеров</b> и скопируй туда .zip файл", "Выбери BSL Shaders из списка и нажми <b>Готово</b>"]}, "complementary": {"name": "Complementary Shaders", "loader": "OptiFine / Iris", "steps": ["Установи <b>OptiFine</b> или <b>Iris Shaders + Fabric</b>", "Скачай шейдер <b>Complementary Shaders</b> (файл .zip)", "Запусти Minecraft с профилем <b>OptiFine</b> или <b>Fabric</b>", "Зайди в <b>Настройки</b> → <b>Настройки видео</b> → <b>Шейдеры</b>", "Нажми <b>Открыть папку шейдеров</b>, скопируй туда .zip файл", "Выбери Complementary из списка и нажми <b>Готово</b>"]}, "unbound": {"name": "Complementary Unbound", "loader": "OptiFine / Iris", "steps": ["Установи <b>OptiFine</b> или <b>Iris Shaders + Fabric</b>", "Скачай шейдер <b>Complementary Unbound</b> (файл .zip)", "Запусти Minecraft с нужным профилем", "Зайди в <b>Настройки</b> → <b>Настройки видео</b> → <b>Шейдеры</b>", "Нажми <b>Открыть папку шейдеров</b>, скопируй туда .zip файл", "Выбери Complementary Unbound из списка и нажми <b>Готово</b>"]}, "voxels": {"name": "Rethinking Voxels", "loader": "Iris + Fabric", "steps": ["Установи <b>Fabric Loader</b> для своей версии Minecraft", "Скачай и установи <b>Iris Shaders</b> (мод для Fabric)", "Скачай шейдер <b>Rethinking Voxels</b> (файл .zip)", "Запусти Minecraft с профилем <b>Fabric</b>", "Зайди в <b>Настройки</b> → <b>Настройки видео</b> → <b>Шейдеры</b>", "Нажми <b>Открыть папку шейдеров</b>, скопируй туда .zip файл", "Выбери Rethinking Voxels из списка и нажми <b>Готово</b>"]}, "makeup": {"name": "MakeUp - Ultra Fast", "loader": "OptiFine / Iris", "steps": ["Установи <b>OptiFine</b> или <b>Iris Shaders + Fabric</b>", "Скачай шейдер <b>MakeUp Ultra Fast</b> (файл .zip)", "Запусти Minecraft с нужным профилем", "Зайди в <b>Настройки</b> → <b>Настройки видео</b> → <b>Шейдеры</b>", "Нажми <b>Открыть папку шейдеров</b>, скопируй туда .zip файл", "Выбери MakeUp из списка и нажми <b>Готово</b>"]}, "mellow": {"name": "Mellow Shaders", "loader": "OptiFine / Iris", "steps": ["Установи <b>OptiFine</b> или <b>Iris Shaders + Fabric</b>", "Скачай шейдер <b>Mellow Shaders</b> (файл .zip)", "Запусти Minecraft с нужным профилем", "Зайди в <b>Настройки</b> → <b>Настройки видео</b> → <b>Шейдеры</b>", "Нажми <b>Открыть папку шейдеров</b>, скопируй туда .zip файл", "Выбери Mellow из списка и нажми <b>Готово</b>"]}, "optifine": {"name": "OptiFine", "loader": "Standalone", "steps": ["Убедись что <b>Java</b> установлена (Java 17 или выше)", "Скачай <b>OptiFine</b> (файл .jar)", "Дважды кликни на .jar файл — откроется установщик", "Нажми <b>Install</b> — OptiFine установится автоматически", "Открой лаунчер Minecraft, выбери профиль <b>OptiFine</b>", "Нажми <b>Играть</b> — готово!"]}, "sodium": {"name": "Sodium", "loader": "Fabric", "steps": ["Установи <b>Fabric Loader</b> для своей версии Minecraft", "Скачай <b>Sodium</b> (файл .jar)", "Скопируй .jar файл в папку <b>.minecraft\\mods</b>", "Запусти Minecraft с профилем <b>Fabric</b>", "Sodium активируется автоматически — FPS уже вырастет!"]}, "jei": {"name": "Just Enough Items", "loader": "Forge / Fabric", "steps": ["Установи <b>Forge</b> или <b>Fabric</b> для своей версии", "Скачай <b>JEI</b> (файл .jar) — убедись что версия совпадает", "Скопируй .jar файл в папку <b>.minecraft\\mods</b>", "Запусти Minecraft с профилем <b>Forge</b> или <b>Fabric</b>", "JEI появится автоматически в правой части инвентаря"]}, "manfog": {"name": "The Man from the Fog", "loader": "Forge", "steps": ["Установи <b>Forge</b> для Minecraft 1.19.2", "Скачай мод <b>The Man from the Fog</b> (файл .jar)", "Скопируй .jar файл в папку <b>.minecraft\\mods</b>", "Запусти Minecraft с профилем <b>Forge 1.19.2</b>", "Заходи в выживание ночью в туман... если осмелишься 😨"]}, "mc-launcher": {"name": "Minecraft Launcher", "loader": "Standalone", "steps": ["Скачай установщик <b>Minecraft Launcher</b> (файл .exe)", "Запусти установщик и следуй инструкциям", "Войди в свой <b>Microsoft / Mojang</b> аккаунт", "Выбери нужную версию Minecraft и нажми <b>Играть</b>"]}, "glowingores": {"name": "Glowing Ores", "loader": "Vanilla", "steps": ["Скачай текстур пак <b>Glowing Ores</b> (файл .zip)", "Открой Minecraft и зайди в <b>Настройки</b> → <b>Пакеты ресурсов</b>", "Нажми <b>Открыть папку пакетов</b> и скопируй туда .zip файл", "Вернись в игру — пак появится в списке доступных", "Нажми на стрелку чтобы активировать и нажми <b>Готово</b>"]}};
+        }
         if (!window.RESOURCE_TAGS) {
             window.RESOURCE_TAGS = {"mc-launcher": ["Launcher", "Official", "Java Edition", "Bedrock", "Microsoft", "Free"], "bsl": ["Shader", "OptiFine", "Iris", "Realistic", "High Quality", "Shadows", "Reflections"], "complementary": ["Shader", "OptiFine", "Iris", "Balanced", "Atmosphere", "Lightweight"], "jei": ["Mod", "Forge", "Fabric", "Utility", "Recipes", "QoL", "Popular"], "sodium": ["Mod", "Fabric", "Performance", "FPS Boost", "Open Source", "Optimization"], "optifine": ["Mod", "Optimization", "Shader Support", "HD Textures", "FPS Boost", "Standalone"], "makeup": ["Shader", "OptiFine", "Iris", "Lightweight", "Fast", "FPS Friendly", "Low-End PC"], "mellow": ["Shader", "OptiFine", "Iris", "Pastel", "Lightweight", "Eye-Friendly", "Creative"], "manfog": ["Mod", "Forge", "Horror", "Atmospheric", "Survival", "Scary", "Adventure"], "unbound": ["Shader", "OptiFine", "Iris", "Cinematic", "Reflections", "High Quality", "Screenshot"], "voxels": ["Shader", "Iris", "Fabric", "Voxel", "Ray Tracing", "Colorful", "Advanced"], "glowingores": ["Texture Pack", "Vanilla", "Mining", "Glowing", "Lightweight", "Utility", "Dark Mode"]};
         }
@@ -2270,6 +2314,21 @@
         document.getElementById('fsDlLongDesc').textContent = longDesc;
         const descSection = document.getElementById('fsDlDescSection');
         if (longDesc) { descSection.style.display = 'block'; } else { descSection.style.display = 'none'; }
+
+        // Install guide
+        const guide = window.INSTALL_GUIDES[id];
+        const installSection = document.getElementById('fsDlInstallSection');
+        const installSteps = document.getElementById('fsDlInstallSteps');
+        const installTitle = document.getElementById('fsDlInstallTitle');
+        if (guide && guide.steps) {
+            installSection.style.display = 'block';
+            installTitle.textContent = 'Как установить ' + guide.name;
+            installSteps.innerHTML = guide.steps.map((step, i) =>
+                `<li><span class="dl-install-step-num">${i+1}</span><span>${step}</span></li>`
+            ).join('');
+        } else {
+            installSection.style.display = 'none';
+        }
 
         // Tags
         const tags = window.RESOURCE_TAGS[id] || [];
