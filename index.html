@@ -206,55 +206,62 @@
 </script>
     <style>
         :root {
-            --bg-color: #0c0e12;
-            --card-bg: #141822;
-            --accent-color: #4caf50;
-            --accent-hover: #45a049;
-            --text-color: #ffffff;
-            --text-muted: #9ca3af;
-            --border-color: #22293a;
-            --neon-glow: 0 0 15px rgba(76, 175, 80, 0.4);
-            --navbar-bg: #0f111a;
-            --header-gradient: linear-gradient(135deg, #112d20, #090e0c);
-            --header-border: #1a3d2b;
-            --search-focus-bg: #191e2b;
-            --dropdown-bg: #0f121a;
-            --dropdown-opt-bg: #121622;
-            --dropdown-opt-border: #2e374c;
-            --msg-user-bg: #222c3f;
-            --msg-bot-bg: #1e4620;
-            --msg-bot-border: #388e3c;
-            --chat-body-bg: #0f111a;
-            --game-gradient: linear-gradient(135deg, #161c28 0%, #0d111a 100%);
-            
-            /* Modrinth style full-screen view */
-            --modal-full-bg: #0b0e14;
-            --version-row-bg: #161b26;
-            --version-row-hover: #1e2533;
+            --bg-color: #080b12;
+            --card-bg: rgba(16, 20, 32, 0.85);
+            --card-bg-solid: #10141f;
+            --accent-color: #22c55e;
+            --accent-hover: #16a34a;
+            --accent-glow: rgba(34, 197, 94, 0.35);
+            --text-color: #f0f4ff;
+            --text-muted: #8892a4;
+            --border-color: rgba(255,255,255,0.07);
+            --neon-glow: 0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.2);
+            --navbar-bg: rgba(8, 11, 18, 0.92);
+            --header-gradient: linear-gradient(135deg, #0d1f15 0%, #080b12 50%, #0a0d1a 100%);
+            --header-border: rgba(34, 197, 94, 0.2);
+            --search-focus-bg: rgba(20, 26, 40, 0.95);
+            --dropdown-bg: rgba(10, 13, 22, 0.97);
+            --dropdown-opt-bg: rgba(16, 20, 32, 0.9);
+            --dropdown-opt-border: rgba(255,255,255,0.06);
+            --msg-user-bg: rgba(30, 40, 65, 0.9);
+            --msg-bot-bg: rgba(20, 50, 30, 0.9);
+            --msg-bot-border: rgba(34, 197, 94, 0.4);
+            --chat-body-bg: rgba(8, 11, 18, 0.95);
+            --game-gradient: linear-gradient(135deg, #0f1420 0%, #080b12 100%);
+            --glass-bg: rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.08);
+            --modal-full-bg: #080b12;
+            --version-row-bg: rgba(16, 20, 32, 0.6);
+            --version-row-hover: rgba(34, 197, 94, 0.08);
         }
 
         body.light-mode {
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-color: #1a1d24;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-            --navbar-bg: #ffffff;
-            --header-gradient: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            --header-border: #a5d6a7;
-            --search-focus-bg: #f9fafb;
-            --dropdown-bg: #f3f4f6;
+            --bg-color: #f0f4ff;
+            --card-bg: rgba(255,255,255,0.9);
+            --card-bg-solid: #ffffff;
+            --accent-color: #16a34a;
+            --accent-hover: #15803d;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(0,0,0,0.08);
+            --neon-glow: 0 0 15px rgba(22, 163, 74, 0.3);
+            --navbar-bg: rgba(255,255,255,0.95);
+            --header-gradient: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 50%, #e0e7ff 100%);
+            --header-border: rgba(22, 163, 74, 0.2);
+            --search-focus-bg: #ffffff;
+            --dropdown-bg: rgba(248,250,252,0.98);
             --dropdown-opt-bg: #ffffff;
-            --dropdown-opt-border: #d1d5db;
-            --msg-user-bg: #e5e7eb;
-            --msg-bot-bg: #e8f5e9;
-            --msg-bot-border: #81c784;
-            --chat-body-bg: #f9fafb;
-            --game-gradient: linear-gradient(135deg, #f0fdf4 0%, #e8f5e9 100%);
-            
-            --modal-full-bg: #f3f4f6;
-            --version-row-bg: #ffffff;
-            --version-row-hover: #f9fafb;
+            --dropdown-opt-border: rgba(0,0,0,0.06);
+            --msg-user-bg: #e2e8f0;
+            --msg-bot-bg: #dcfce7;
+            --msg-bot-border: rgba(22, 163, 74, 0.3);
+            --chat-body-bg: #f8fafc;
+            --game-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0e7ff 100%);
+            --glass-bg: rgba(255,255,255,0.6);
+            --glass-border: rgba(0,0,0,0.06);
+            --modal-full-bg: #f8fafc;
+            --version-row-bg: rgba(248,250,252,0.8);
+            --version-row-hover: rgba(22, 163, 74, 0.06);
         }
 
         * {
@@ -266,6 +273,11 @@
         }
         body {
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(34, 197, 94, 0.04) 0%, transparent 50%);
+            background-attachment: fixed;
             color: var(--text-color);
             padding-bottom: 60px;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -286,18 +298,15 @@
         .logo { font-size: 1.4rem; font-weight: bold; color: #52b788; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .nav-links { display: flex; gap: 15px; }
         
-        .nav-item { 
-            color: var(--text-muted); 
-            text-decoration: none; 
-            font-weight: 600; 
-            font-size: 0.95rem; 
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            cursor: pointer; 
+        .nav-item {
+            cursor: pointer;
+            padding: 7px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
             position: relative;
-            background: transparent;
-            border: 1px solid transparent;
         }
         .nav-item:hover { 
             color: var(--text-color); 
@@ -344,15 +353,25 @@
 
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         
-        header { 
-            text-align: center; 
-            padding: 50px 30px; 
-            background: var(--header-gradient); 
-            border: 2px solid var(--header-border); 
-            border-radius: 24px; 
-            margin: 30px 0; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
-            transition: background 0.3s ease, border 0.3s ease;
+        header {
+            background: var(--header-gradient);
+            border: 1px solid var(--header-border);
+            border-radius: 20px;
+            padding: 48px 32px;
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(34,197,94,0.08) 0%, transparent 60%);
+            pointer-events: none;
         }
         header h1 { font-size: 2.6rem; color: #52b788; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
         header p { color: var(--text-color); font-size: 1.1rem; max-width: 700px; margin: 0 auto; line-height: 1.6; font-weight: 500; }
@@ -392,19 +411,21 @@
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
         .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
             overflow: hidden;
-            border: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        box-shadow 0.3s ease,
+                        border-color 0.3s ease;
+            position: relative;
         }
         .card:hover {
-            border-color: rgba(82,183,136,0.5);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-            transform: translateY(-2px);
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(34, 197, 94, 0.12);
+            border-color: rgba(34, 197, 94, 0.25);
         }
         /* Modrinth: katta rasm tepada */
         .card-img {
@@ -514,7 +535,21 @@
         .dropdown-option { padding: 10px 12px; cursor: pointer; font-size: 0.85rem; color: var(--text-color); }
         .dropdown-option:hover { background-color: rgba(82, 183, 136, 0.15); color: var(--accent-color); }
 
-        .btn { display: block; text-align: center; background-color: #1a202c; color: #e2e8f0; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .btn {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
         .card:hover .btn { background-color: var(--accent-color); color: white; }
         .card-actions { display: none !important; }
 
@@ -1310,6 +1345,156 @@
             font-size: 0.75rem;
             opacity: 0.7;
         }
+
+        /* ===== SKELETON LOADER ===== */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.05) 25%, 
+                rgba(255,255,255,0.1) 50%, 
+                rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        .card.skeleton-card .card-img { background: rgba(255,255,255,0.06); height: 160px; }
+        .card.skeleton-card .sk-line { height: 14px; margin: 8px 12px; border-radius: 6px; }
+        .card.skeleton-card .sk-line.short { width: 60%; }
+
+        /* ===== PAGE LOAD ANIMATION ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(34, 197, 94, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(34, 197, 94, 0.6); }
+        }
+        .navbar { animation: slideDown 0.4s ease; }
+        header { animation: fadeInUp 0.5s ease 0.1s both; }
+        .featured-slider-section { animation: fadeInUp 0.5s ease 0.2s both; }
+        .filter-bar { animation: fadeInUp 0.5s ease 0.25s both; }
+        .search-section { animation: fadeInUp 0.5s ease 0.3s both; }
+        .card { animation: fadeInUp 0.4s ease both; }
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.15s; }
+        .card:nth-child(4) { animation-delay: 0.2s; }
+        .card:nth-child(5) { animation-delay: 0.25s; }
+        .card:nth-child(6) { animation-delay: 0.3s; }
+
+        /* ===== ACCENT GLOW ON ACTIVE NAV ===== */
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: white;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35);
+        }
+        .nav-item:hover:not(.active) {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--accent-color);
+        }
+
+        /* ===== ENHANCED FILTER TAGS ===== */
+        .tag {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+        }
+
+        /* ===== LANGUAGE SWITCHER ===== */
+        .lang-switcher {
+            display: flex;
+            gap: 4px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 3px;
+        }
+        .lang-btn {
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
+        }
+        .lang-btn.active {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        }
+        .lang-btn:hover:not(.active) {
+            color: var(--text-color);
+            background: rgba(255,255,255,0.06);
+        }
+
+        /* ===== PROFILE LANG SETTING ===== */
+        .lang-setting-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lang-option-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--glass-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .lang-option-btn.active {
+            border-color: var(--accent-color);
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--accent-color);
+        }
+
+        /* ===== ENHANCED CARD IMAGE ===== */
+        .card-img {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .card:hover .card-img {
+            transform: scale(1.06);
+        }
+
+        /* ===== GLOWING ACCENT LINE ===== */
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            opacity: 0.4;
+        }
+        .navbar { position: sticky; top: 0; z-index: 100; }
+
     </style>
 </head>
 <body>
@@ -1332,9 +1517,14 @@
         <span class="nav-item" id="tab-texture" onclick="filterCategory('texture')">Texture Packs</span>
     </div>
     <div class="auth-buttons">
+        <div class="lang-switcher" id="langSwitcher">
+            <button class="lang-btn active" id="lang-uz" onclick="setLang('uz')">UZ</button>
+            <button class="lang-btn" id="lang-ru" onclick="setLang('ru')">RU</button>
+            <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
+        </div>
         <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
-        <span class="btn-auth btn-login" id="btnLogin" onclick="openAuthModal('login')">Log In</span>
-        <span class="btn-auth btn-register" id="btnRegister" onclick="openAuthModal('register')">Sign Up</span>
+        <span class="btn-auth btn-login" id="btnLogin" onclick="openAuthModal('login')" data-i18n="nav.login">Log In</span>
+        <span class="btn-auth btn-register" id="btnRegister" onclick="openAuthModal('register')" data-i18n="nav.signup">Sign Up</span>
         <div id="btnUserInfo" style="display:none;align-items:center;gap:8px;">
             <div onclick="openProfileModal()" style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;cursor:pointer;" title="Profil">
                 <div id="navAvatarWrap" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4caf50,#2e7d32);display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;overflow:hidden;"></div>
@@ -3204,6 +3394,157 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- ===== FEATURED SLIDER JS ===== -->
 <script>
+
+    // ===== I18N TRANSLATION SYSTEM =====
+    const TRANSLATIONS = {
+        uz: {
+            'nav.login': 'Kirish',
+            'nav.signup': "Ro'yxat",
+            'nav.all': 'Hammasi',
+            'nav.launcher': 'Launcher',
+            'nav.shaders': 'Shaderlar',
+            'nav.mods': 'Modlar',
+            'nav.texture': 'Teksturalar',
+            'header.title': 'Minecraft Premium Resurslar Markazi',
+            'header.desc': "Bu yerda o'zingiz uchun ko'plab premium modlar, shaderlar va tekstura paketlarini daxshatli tezlikda topasiz!",
+            'search.placeholder': 'Resurs yoki mod nomini kiriting...',
+            'btn.download': 'Yuklab Olish',
+            'btn.download.start': 'Yuklab Olish',
+            'profile.settings': 'Sozlamalar',
+            'profile.language': 'Til',
+            'profile.darkmode': "Qorong'u tema",
+            'profile.notifications': 'Bildirishnomalar',
+            'profile.email': 'Email yangiliklar',
+            'profile.account': 'Hisob',
+            'profile.logout': 'Tizimdan chiqish',
+            'profile.delete': "Hisobni o'chirish",
+            'profile.save': 'Saqlash',
+            'profile.title': 'Profil sozlamalari',
+            'profile.upload': 'Rasm yuklash',
+            'featured': 'Eng Mashhur Shaderlar & Modlar',
+            'close': 'Yopish',
+            'notif.close': 'Yopish',
+        },
+        ru: {
+            'nav.login': 'Войти',
+            'nav.signup': 'Регистрация',
+            'nav.all': 'Все',
+            'nav.launcher': 'Лаунчер',
+            'nav.shaders': 'Шейдеры',
+            'nav.mods': 'Моды',
+            'nav.texture': 'Текстуры',
+            'header.title': 'Центр Minecraft Premium Ресурсов',
+            'header.desc': 'Здесь вы найдёте огромный выбор модов, шейдеров и текстурных паков с молниеносной скоростью!',
+            'search.placeholder': 'Введите название ресурса или мода...',
+            'btn.download': 'Скачать',
+            'btn.download.start': 'Скачать',
+            'profile.settings': 'Настройки',
+            'profile.language': 'Язык',
+            'profile.darkmode': 'Тёмная тема',
+            'profile.notifications': 'Уведомления',
+            'profile.email': 'Email рассылка',
+            'profile.account': 'Аккаунт',
+            'profile.logout': 'Выйти',
+            'profile.delete': 'Удалить аккаунт',
+            'profile.save': 'Сохранить',
+            'profile.title': 'Настройки профиля',
+            'profile.upload': 'Загрузить фото',
+            'featured': 'Самые популярные шейдеры и моды',
+            'close': 'Закрыть',
+            'notif.close': 'Закрыть',
+        },
+        en: {
+            'nav.login': 'Log In',
+            'nav.signup': 'Sign Up',
+            'nav.all': 'All',
+            'nav.launcher': 'Launcher',
+            'nav.shaders': 'Shaders',
+            'nav.mods': 'Mods',
+            'nav.texture': 'Texture Packs',
+            'header.title': 'Minecraft Premium Resources Hub',
+            'header.desc': 'Find a huge selection of premium mods, shaders and texture packs at lightning speed!',
+            'search.placeholder': 'Search for a resource or mod...',
+            'btn.download': 'Download',
+            'btn.download.start': 'Download',
+            'profile.settings': 'Settings',
+            'profile.language': 'Language',
+            'profile.darkmode': 'Dark Mode',
+            'profile.notifications': 'Notifications',
+            'profile.email': 'Email Newsletter',
+            'profile.account': 'Account',
+            'profile.logout': 'Sign Out',
+            'profile.delete': 'Delete Account',
+            'profile.save': 'Save',
+            'profile.title': 'Profile Settings',
+            'profile.upload': 'Upload Photo',
+            'featured': 'Most Popular Shaders & Mods',
+            'close': 'Close',
+            'notif.close': 'Close',
+        }
+    };
+
+    let currentLang = localStorage.getItem('mc_lang') || 'uz';
+
+    function setLang(lang) {
+        currentLang = lang;
+        try { localStorage.setItem('mc_lang', lang); } catch(e) {}
+
+        // Update navbar lang buttons
+        ['uz','ru','en'].forEach(l => {
+            const btn = document.getElementById('lang-' + l);
+            const pbtn = document.getElementById('profileLang-' + l);
+            if (btn) btn.classList.toggle('active', l === lang);
+            if (pbtn) pbtn.classList.toggle('active', l === lang);
+        });
+
+        // Translate all data-i18n elements
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const tr = TRANSLATIONS[lang];
+            if (tr && tr[key]) el.textContent = tr[key];
+        });
+
+        // Translate search placeholder
+        const searchInput = document.getElementById('searchInput') || document.querySelector('.search-input');
+        if (searchInput && TRANSLATIONS[lang]['search.placeholder']) {
+            searchInput.placeholder = TRANSLATIONS[lang]['search.placeholder'];
+        }
+
+        // Translate download buttons
+        const tr = TRANSLATIONS[lang];
+        document.querySelectorAll('[data-i18n-btn]').forEach(el => {
+            const key = el.getAttribute('data-i18n-btn');
+            if (tr && tr[key]) el.textContent = tr[key];
+        });
+
+        // Update header
+        const h1 = document.querySelector('header h1');
+        const hp = document.querySelector('header p');
+        if (h1 && tr['header.title']) h1.textContent = tr['header.title'];
+        if (hp && tr['header.desc']) hp.textContent = tr['header.desc'];
+
+        // Nav tabs
+        const tabMap = {'all':'nav.all','launcher':'nav.launcher','shaders':'nav.shaders','mods':'nav.mods','texture':'nav.texture'};
+        Object.entries(tabMap).forEach(([id, key]) => {
+            const el = document.getElementById('tab-' + id);
+            if (el && tr[key]) el.textContent = tr[key];
+        });
+
+        // Auth buttons
+        const loginBtn = document.getElementById('btnLogin');
+        const regBtn = document.getElementById('btnRegister');
+        if (loginBtn && tr['nav.login']) loginBtn.textContent = tr['nav.login'];
+        if (regBtn && tr['nav.signup']) regBtn.textContent = tr['nav.signup'];
+    }
+
+    // Init lang on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        setLang(currentLang);
+    });
+
+    </script>
+
+<script>
 (function() {
     const TOTAL = 5;
     const AUTO_DELAY = 4500; // ms per slide
@@ -3330,9 +3671,17 @@ document.addEventListener('DOMContentLoaded', function() {
             <i class="fa-solid fa-floppy-disk"></i> Saqlash
         </button>
 
-        <div class="profile-section-title">Sozlamalar</div>
+        <div class="profile-section-title" data-i18n="profile.settings">Sozlamalar</div>
         <div class="setting-row">
-            <div class="setting-row-label"><i class="fa-solid fa-moon"></i> Qorong'u tema</div>
+            <div class="setting-row-label"><i class="fa-solid fa-globe"></i> <span data-i18n="profile.language">Til</span></div>
+        </div>
+        <div class="lang-setting-row" style="margin-bottom:16px;">
+            <button class="lang-option-btn active" id="profileLang-uz" onclick="setLang('uz')">🇺🇿 O'zbek</button>
+            <button class="lang-option-btn" id="profileLang-ru" onclick="setLang('ru')">🇷🇺 Русский</button>
+            <button class="lang-option-btn" id="profileLang-en" onclick="setLang('en')">🇬🇧 English</button>
+        </div>
+        <div class="setting-row">
+            <div class="setting-row-label"><i class="fa-solid fa-moon"></i> <span data-i18n="profile.darkmode">Qorong'u tema</span></div>
             <div class="toggle-sw on" id="toggleThemeSw" onclick="toggleThemeFromProfile(this)"></div>
         </div>
         <div class="setting-row">
