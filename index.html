@@ -93,7 +93,11 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script>
     // ===== PROFILE FUNKSIYALARI =====
     function escapeHtml(str) {
         if (typeof str !== 'string') return '';
@@ -136,7 +140,7 @@
         const user = fbAuth ? fbAuth.currentUser : null;
         if (!user) return;
         const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
+        if (!name) { showNotif("Ism bo'sh bo'lmasin!"); return; }
         if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
         user.updateProfile({ displayName: name }).then(function() {
             document.getElementById('profileDisplayName').textContent = name;
@@ -171,12 +175,12 @@
     }
 
     function confirmDeleteAccount() {
-        if (!confirm('Hisobingizni o'chirmoqchimisiz?\nBarcha ma'lumotlaringiz o'chadi va qaytarib bo'lmaydi!')) return;
+        if (!confirm("Hisobingizni o'chirmoqchimisiz?\nBarcha ma'lumotlaringiz o'chadi va qaytarib bo'lmaydi!")) return;
         const user = fbAuth ? fbAuth.currentUser : null;
         if (!user) return;
         user.delete().then(function() {
             closeProfileModal();
-            showNotif('Hisobingiz o'chirildi!');
+            showNotif("Hisobingiz o'chirildi!");
         }).catch(function(e) {
             if (e.code === 'auth/requires-recent-login') {
                 showNotif('Xavfsizlik uchun qayta kiring va yana urining.');
@@ -199,323 +203,6 @@
     }
 
 </script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img loading="lazy" src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            const letter = (user.displayName || user.email).charAt(0).toUpperCase();
-            wrap.innerHTML = `<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:white">${letter}</div>`;
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage Firebase da yoqilmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif("Rasm 2MB dan kichik bo'lsin!"); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        const wrap = document.getElementById('profileAvatarWrap');
-        wrap.innerHTML = '<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem">...</div>';
-        const ext = file.name.split('.').pop().toLowerCase();
-        const storageRef = window.fbStorage.ref().child('avatars/' + user.uid + '/avatar.' + ext);
-        storageRef.put(file).then(function(snapshot) {
-            return storageRef.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url }).then(function() { return url; });
-        }).then(function(url) {
-            wrap.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">';
-            updateNavAvatar(fbAuth.currentUser);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) {
-            console.error('Avatar upload error:', e);
-            showNotif('Xatolik: ' + (e.message || "Noma'lum xato"));
-        });
-    }
-
-    function confirmDeleteAccount() {
-        if (!confirm('Hisobingizni o'chirmoqchimisiz?\nBarcha ma'lumotlaringiz o'chadi va qaytarib bo'lmaydi!')) return;
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        user.delete().then(function() {
-            closeProfileModal();
-            showNotif('Hisobingiz o'chirildi!');
-        }).catch(function(e) {
-            if (e.code === 'auth/requires-recent-login') {
-                showNotif('Xavfsizlik uchun qayta kiring va yana urining.');
-                fbLogout();
-            } else {
-                showNotif('Xatolik: ' + e.message);
-            }
-        });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img loading="lazy" src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            const letter = (user.displayName || user.email).charAt(0).toUpperCase();
-            wrap.innerHTML = `<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:700;color:white">${letter}</div>`;
-        }
-    }
-
-</script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img loading="lazy" src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            const letter = (user.displayName || user.email).charAt(0).toUpperCase();
-            wrap.innerHTML = `<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:white">${letter}</div>`;
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage Firebase da yoqilmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif("Rasm 2MB dan kichik bo'lsin!"); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        const wrap = document.getElementById('profileAvatarWrap');
-        wrap.innerHTML = '<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem">...</div>';
-        const ext = file.name.split('.').pop().toLowerCase();
-        const storageRef = window.fbStorage.ref().child('avatars/' + user.uid + '/avatar.' + ext);
-        storageRef.put(file).then(function(snapshot) {
-            return storageRef.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url }).then(function() { return url; });
-        }).then(function(url) {
-            wrap.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">';
-            updateNavAvatar(fbAuth.currentUser);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) {
-            console.error('Avatar upload error:', e);
-            showNotif('Xatolik: ' + (e.message || "Noma'lum xato"));
-        });
-    }
-
-    function confirmDeleteAccount() {
-        if (!confirm('Hisobingizni o'chirmoqchimisiz?\nBarcha ma'lumotlaringiz o'chadi va qaytarib bo'lmaydi!')) return;
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        user.delete().then(function() {
-            closeProfileModal();
-            showNotif('Hisobingiz o'chirildi!');
-        }).catch(function(e) {
-            if (e.code === 'auth/requires-recent-login') {
-                showNotif('Xavfsizlik uchun qayta kiring va yana urining.');
-                fbLogout();
-            } else {
-                showNotif('Xatolik: ' + e.message);
-            }
-        });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img loading="lazy" src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            const letter = (user.displayName || user.email).charAt(0).toUpperCase();
-            wrap.innerHTML = `<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:700;color:white">${letter}</div>`;
-        }
-    }
-
-</script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js">
-    // ===== PROFILE FUNKSIYALARI =====
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return '';
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-    }
-
-    function openProfileModal() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) { openAuthModal('login'); return; }
-
-        document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
-        document.getElementById('profileEmailText').textContent = user.email;
-        document.getElementById('profileNameInput').value = user.displayName || '';
-
-        const wrap = document.getElementById('profileAvatarWrap');
-        if (user.photoURL) {
-            wrap.innerHTML = '<img loading="lazy" src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-            const letter = (user.displayName || user.email).charAt(0).toUpperCase();
-            wrap.innerHTML = `<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:white">${letter}</div>`;
-        }
-
-        const isDark = !document.body.classList.contains('light-mode');
-        const sw = document.getElementById('toggleThemeSw');
-        if (sw) { if (isDark) sw.classList.add('on'); else sw.classList.remove('on'); }
-
-        document.getElementById('profileModal').classList.add('active');
-    }
-
-    function closeProfileModal() {
-        document.getElementById('profileModal').classList.remove('active');
-    }
-
-    function toggleThemeFromProfile(el) {
-        el.classList.toggle('on');
-        toggleTheme();
-    }
-
-    function saveProfileName() {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
-        if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
-        user.updateProfile({ displayName: name }).then(function() {
-            document.getElementById('profileDisplayName').textContent = name;
-            document.getElementById('navUsername').textContent = name;
-            showNotif('Ism saqlandi! ✅');
-        }).catch(function(e) { showNotif('Xatolik: ' + e.message); });
-    }
-
-    function uploadAvatar(input) {
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user || !input.files[0]) return;
-        if (!window.fbStorage) { showNotif('Storage Firebase da yoqilmagan!'); return; }
-        const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) { showNotif("Rasm 2MB dan kichik bo'lsin!"); return; }
-        if (!file.type.startsWith('image/')) { showNotif('Faqat rasm fayli yuklang!'); return; }
-        const wrap = document.getElementById('profileAvatarWrap');
-        wrap.innerHTML = '<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem">...</div>';
-        const ext = file.name.split('.').pop().toLowerCase();
-        const storageRef = window.fbStorage.ref().child('avatars/' + user.uid + '/avatar.' + ext);
-        storageRef.put(file).then(function(snapshot) {
-            return storageRef.getDownloadURL();
-        }).then(function(url) {
-            return user.updateProfile({ photoURL: url }).then(function() { return url; });
-        }).then(function(url) {
-            wrap.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">';
-            updateNavAvatar(fbAuth.currentUser);
-            showNotif('Rasm saqlandi! ✅');
-        }).catch(function(e) {
-            console.error('Avatar upload error:', e);
-            showNotif('Xatolik: ' + (e.message || "Noma'lum xato"));
-        });
-    }
-
-    function confirmDeleteAccount() {
-        if (!confirm('Hisobingizni o'chirmoqchimisiz?\nBarcha ma'lumotlaringiz o'chadi va qaytarib bo'lmaydi!')) return;
-        const user = fbAuth ? fbAuth.currentUser : null;
-        if (!user) return;
-        user.delete().then(function() {
-            closeProfileModal();
-            showNotif('Hisobingiz o'chirildi!');
-        }).catch(function(e) {
-            if (e.code === 'auth/requires-recent-login') {
-                showNotif('Xavfsizlik uchun qayta kiring va yana urining.');
-                fbLogout();
-            } else {
-                showNotif('Xatolik: ' + e.message);
-            }
-        });
-    }
-
-    function updateNavAvatar(user) {
-        const wrap = document.getElementById('navAvatarWrap');
-        if (!wrap) return;
-        if (user && user.photoURL) {
-            wrap.innerHTML = '<img loading="lazy" src="' + escapeHtml(user.photoURL) + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else if (user) {
-            const letter = (user.displayName || user.email).charAt(0).toUpperCase();
-            wrap.innerHTML = `<div style="width:100%;height:100%;border-radius:50%;background:#1b7a3e;display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:700;color:white">${letter}</div>`;
-        }
-    }
-
 </script>
     <style>
         :root {
@@ -2453,7 +2140,7 @@
 
     async function deleteComment(docId) {
         if (!window.db) return;
-        if (!confirm('Izohni o'chirmoqchimisiz?')) return;
+        if (!confirm("Izohni o'chirmoqchimisiz?")) return;
         await window.db.collection('comments').doc(docId).delete();
         // Reply larini ham o'chiramiz
         const replies = await window.db.collection('comments').where('parentId','==',docId).get();
@@ -2517,7 +2204,7 @@
             list.innerHTML = '';
 
             if (parents.length === 0) {
-                list.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:24px;font-size:0.9rem">Hali izoh yo'q. Birinchi bo'ling!</div>';
+                list.innerHTML = `<div style="color:var(--text-muted);text-align:center;padding:24px;font-size:0.9rem">Hali izoh yo'q. Birinchi bo'ling!</div>`;
                 return;
             }
 
@@ -3126,7 +2813,7 @@
 Sen faqat o'zbek tilida gaplashasan. Qisqa, aniq va do'stona javob ber. Emoji ishlatsa bo'ladi.
 
 Saytda mavjud resurslar:
-${SITE_RESOURCES.map(r => `- ${r.name} (${r.category}): versiyalar: ${r.versions.join(', ')} | loader: ${r.loader} | ${r.desc}`).join('\n')}
+${SITE_RESOURCES.map(r => '- ' + r.name + ' (' + r.category + '): versiyalar: ' + r.versions.join(', ') + ' | loader: ' + r.loader + ' | ' + r.desc).join('\n')}
 
 Agar foydalanuvchi biror resursni "ochib ber", "ko'rsat", "sahifasini kor", "yuklab olmoqchiman" desa, javobingning OXIRIDA aynan shu formatda yoz:
 [OPEN:resurs_id]
@@ -3343,7 +3030,7 @@ Agar savol sayt bilan bog'liq bo'lmasa ham yordam ber, lekin saytga qaytishni es
         const user = fbAuth ? fbAuth.currentUser : null;
         if (!user) return;
         const name = document.getElementById('profileNameInput').value.trim();
-        if (!name) { showNotif('Ism bo\'sh bo\'lmasin!'); return; }
+        if (!name) { showNotif("Ism bo'sh bo'lmasin!"); return; }
         if (name.length > 30) { showNotif('Ism 30 belgidan oshmasin!'); return; }
         user.updateProfile({ displayName: name }).then(function() {
             document.getElementById('profileDisplayName').textContent = name;
@@ -3378,12 +3065,12 @@ Agar savol sayt bilan bog'liq bo'lmasa ham yordam ber, lekin saytga qaytishni es
     }
 
     function confirmDeleteAccount() {
-        if (!confirm('Hisobingizni o'chirmoqchimisiz?\nBarcha ma'lumotlaringiz o'chadi va qaytarib bo'lmaydi!')) return;
+        if (!confirm("Hisobingizni o'chirmoqchimisiz?\nBarcha ma'lumotlaringiz o'chadi va qaytarib bo'lmaydi!")) return;
         const user = fbAuth ? fbAuth.currentUser : null;
         if (!user) return;
         user.delete().then(function() {
             closeProfileModal();
-            showNotif('Hisobingiz o'chirildi!');
+            showNotif("Hisobingiz o'chirildi!");
         }).catch(function(e) {
             if (e.code === 'auth/requires-recent-login') {
                 showNotif('Xavfsizlik uchun qayta kiring va yana urining.');
